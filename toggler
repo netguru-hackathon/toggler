@@ -4,5 +4,21 @@ require 'togglv8'
 require 'pry' 
 
 api_token = ENV["TOGGLER_API_KEY"]
-api = TogglV8::API.new(api_token)
+api = user = api.me(all=true)
+workspaces = api.my_workspaces(user)
+workspace = ENV[""]
+projects = api.projects(workspace)
+binding.pry
 
+def _initialize
+  api_token = ENV["TOGGLER_API_KEY"]
+  @api = TogglV8::API.new(api_token)
+  @user = @api.me(true)
+  @user_workspaces = @api.my_workspaces(@user)
+end
+
+def list_projects(workspace_name)
+  workspace_name ||= @default_workspace
+  workspace_id = @user_workspaces.find { |w| w["name"] == workspace_name }
+  @api.projects(workspace_id)
+end
