@@ -4,7 +4,7 @@ require 'togglv8'
 require 'pry'
 require 'yaml'
 require_relative 'toggl_manager'
-require_relative 'command_line'
+require_relative 'command_line/handler'
 
-command_line = CommandLine.new
+command_line = CommandLine::Handler.new
 command_line.call
