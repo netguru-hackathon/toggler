@@ -27,6 +27,7 @@ module CommandLine
         when "start" then task_start
         when "stop" then task_stop
         when "list" then fetch_list
+        when "current" then fetch_current
         else command_not_found
       end
     end
@@ -50,6 +51,10 @@ module CommandLine
       Toggler::TogglManager.new.list_projects_with_tasks.each{ |project_info| puts project_info }
     end
 
+    def fetch_current
+      puts Toggler::TogglManager.new.current_time_entry
+    end
+
     def command_not_found
       puts """
       Command not found
@@ -57,6 +62,7 @@ module CommandLine
       start [[project]/[task]] - to start entry
       stop                   - to stop current entry
       list                   - to fetch all project entries
+      current                - show current time entry
       """
       puts CommandLine::Parser.parse %w[--help]
     end
