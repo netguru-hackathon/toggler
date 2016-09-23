@@ -1,4 +1,4 @@
-require_relative 'parser'
+require_relative "parser"
 
 module CommandLine
   class Handler
@@ -19,7 +19,7 @@ module CommandLine
 
     def assign_project_and_task(value)
       return if value.nil?
-      @project, @task = value.split('/')
+      @project, @task = value.split("/")
     end
 
     def run_command
@@ -32,11 +32,14 @@ module CommandLine
     end
 
     def task_start
-      puts Toggler::TogglManager.new.start_entry(description: options.description,
-                                            task_name: task,
-                                            project_name: project,
-                                            billable: options.billable,
-                                            workspace_name: options.workspace)
+      entry_params = {
+        description: options.description,
+        task_name: task,
+        project_name: project,
+        billable: options.billable,
+        workspace_name: options.workspace
+      }
+      puts Toggler::TogglManager.new.start_entry(entry_params)
     end
 
     def task_stop

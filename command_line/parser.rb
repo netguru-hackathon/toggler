@@ -1,4 +1,4 @@
-require 'optparse'
+require "optparse"
 
 module CommandLine
   Options = Struct.new(:description, :workspace, :billable)

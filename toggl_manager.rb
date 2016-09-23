@@ -2,16 +2,16 @@ module Toggler
   class TogglManager
 
     def initialize
-      @config = YAML::load_file('config.yml')
+      @config = YAML::load_file("config.yml")
       init_api
       load_defaults
     end
 
-    def start_entry(description = nil,
-                    task_name = nil,
-                    project_name = default_project["name"],
-                    billable = default_billable,
-                    workspace_name = default_workspace["name"])
+    def start_entry(description:, task_name:, project_name:, billable:, workspace_name:)
+      project_name ||= default_project["name"]
+      billable ||= default_billable
+      workspace_name ||= default_workspace["name"]
+
       new_entry_attributes = {
         "wid" => workspace_id(workspace_name),
         "pid" => project_id(workspace_name, project_name),

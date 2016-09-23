@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'togglv8'
-require 'pry'
-require 'yaml'
-require_relative 'toggl_manager'
-require_relative 'command_line/handler'
+require "togglv8"
+require "pry"
+require "yaml"
+require_relative "toggl_manager"
+require_relative "command_line/handler"
 
 command_line = CommandLine::Handler.new
 command_line.call
