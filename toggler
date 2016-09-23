@@ -2,6 +2,8 @@
 
 require 'togglv8'
 require 'pry'
+require_relative 'toggl_manager'
+require_relative 'command_line'
 
 module Toggler
   class ApiInterface
@@ -34,6 +36,13 @@ module Toggler
       }
       new_entry_attributes["description"] = description if description
       api.create_time_entry(new_entry_attributes)
+      "time entry started" if api.create_time_entry(new_entry_attributes)
+    end
+
+    def stop_entry
+      time_entry_id = api.get_current_time_entry&.[]("id")
+      return "no running time entry" unless time_entry_id
+      "time entry stopped" if api.stop_time_entry(time_entry_id)
     end
 
     private
@@ -55,9 +64,12 @@ module Toggler
   end
 end
 
-
 api = Toggler::ApiInterface.new
 binding.pry
 
 # api.list_projects
 # api.start_entry(pid: "22925160", description: "description")
+# api.stop_entry
+#
+command_line = CommandLine.new
+command_line.call
