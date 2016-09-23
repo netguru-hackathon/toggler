@@ -5,7 +5,6 @@ require 'pry'
 
 module Toggler
   class ApiInterface
-    attr_reader :api, :user, :workspaces, :default_billable
 
     def initialize
       api_token = ENV["TOGGLER_API_KEY"]
@@ -20,10 +19,6 @@ module Toggler
       api.projects(workspace["id"])
     end
 
-    def default_workspace
-      @default_wid ||= workspaces.first
-    end
-
     def start_entry(wid: default_workspace["id"], pid:, description:, billable: default_billable)
       new_entry_attributes = {
         "description" => description,
@@ -35,6 +30,14 @@ module Toggler
         "created_with" => "toggler",
       }
       api.create_time_entry(new_entry_attributes)
+    end
+
+    private
+
+    attr_reader :api, :user, :workspaces, :default_billable
+
+    def default_workspace
+      @default_wid ||= workspaces.first
     end
   end
 end
