@@ -36,13 +36,7 @@ module Toggler
     end
 
     def list_projects_with_tasks(workspace_name = default_workspace["name"])
-      wid = workspace_id(workspace_name)
-      projects = api.projects(wid)
-      tasks = api.tasks(wid)
-      projects.map do |project|
-        project["tasks"] = tasks.select{ |task| task["pid"] == project["id"] }
-        project
-      end
+      projects_with_tasks(workspace_id(workspace_name))
     end
 
     private
@@ -52,6 +46,16 @@ module Toggler
     def list_projects(workspace_name = default_workspace["name"])
       wid = workspace_id(workspace_name)
       api.projects(wid)
+    end
+
+    def projects_with_tasks(wid)
+      projects = api.projects(wid)
+      tasks = api.tasks(wid)
+      project_with_tasks = projects.map do |project|
+        project_name = project["name"]
+        project_tasks = tasks.select{ |task| task["pid"] == project["id"] }.map{ |taks| taks["name"] }
+        "#{project_name}: \n\t#{project_tasks.join(', ')}"
+      end
     end
 
     def default_workspace
