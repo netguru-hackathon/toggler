@@ -2,6 +2,8 @@
 
 require 'togglv8'
 require 'pry'
+require_relative 'toggl_manager'
+require_relative 'command_line'
 
 module Toggler
   class ApiInterface
@@ -48,3 +50,6 @@ binding.pry
 
 # api.list_projects
 # api.start_entry(pid: "22925160", description: "description")
+#
+command_line = CommandLine.new
+command_line.call
