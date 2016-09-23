@@ -1,4 +1,4 @@
 billable_by_default: false
-toggl_api_key: 0ba38697b8aadc8fbccfcd10c16dccc4
+toggl_api_key: ENV['TOGGL_API_KEY']
 default_workspace_name: Dajvido's workspace
 default_project_name: hackaton
