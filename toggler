@@ -2,6 +2,7 @@
 
 require 'togglv8'
 require 'pry'
+require 'yaml'
 require_relative 'toggl_manager'
 require_relative 'command_line'
 

@@ -2,10 +2,9 @@ module Toggler
   class TogglManager
 
     def initialize
-      @default_billable = ENV["TOGGLER_BILLABLE"] || false
-      @api = TogglV8::API.new(ENV["TOGGLER_API_KEY"])
-      @user = api.me(true)
-      @workspaces = api.my_workspaces(user)
+      @config = YAML::load_file('config.yml')
+      init_api
+      load_defaults
     end
 
     def start_entry(description = nil,
@@ -41,7 +40,26 @@ module Toggler
 
     private
 
-    attr_reader :api, :user, :workspaces, :default_billable, :default_project
+    attr_reader :api, :user, :workspaces, :default_billable, :default_project, :default_workspace
+
+    def init_api
+      @api_key = @config["toggl_api_key"]
+      @api = TogglV8::API.new(@api_key)
+      @user = api.me(true)
+      @workspaces = api.my_workspaces(user)
+    end
+
+    def load_defaults
+      @default_billable = @config["billable_by_default"];
+      @default_workspace = {
+        "id" => workspace_id(@config["default_workspace_name"]),
+        "name" => @config["default_workspace_name"]
+      }
+      @default_project = {
+        "id" => project_id(@default_workspace["name"], @config["default_project_name"]),
+        "name" => @config["default_project_name"]
+      }
+    end
 
     def list_projects(workspace_name = default_workspace["name"])
       wid = workspace_id(workspace_name)
@@ -56,14 +74,6 @@ module Toggler
         project_tasks = tasks.select{ |task| task["pid"] == project["id"] }.map{ |taks| taks["name"] }
         "#{project_name}: \n\t#{project_tasks.join(', ')}"
       end
-    end
-
-    def default_workspace
-      @default_wid ||= workspaces.first
-    end
-
-    def default_project
-      list_projects(default_workspace["name"]).first
     end
 
     def workspace_id(workspace_name)
