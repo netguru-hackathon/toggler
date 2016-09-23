@@ -5,7 +5,6 @@ require 'pry'
 
 module Toggler
   class ApiInterface
-
     def initialize
       api_token = ENV["TOGGLER_API_KEY"]
       @default_billable = ENV["TOGGLER_BILLABLE"] || false
@@ -15,13 +14,17 @@ module Toggler
     end
 
     def list_projects(workspace_name: default_workspace["name"])
-      workspace = workspaces.find { |w| w["name"] == workspace_name }
-      api.projects(workspace["id"])
+      wid = workspace_id(workspace_name)
+      api.projects(wid)
     end
 
-    def start_entry(wid: default_workspace["id"], pid:, description:, billable: default_billable)
+    def start_entry(workspace = default_workspace["name"],
+                    project = default_project["name"],
+                    billable = default_billable,
+                    description = nil)
+      wid = workspace_id(workspace)
+      pid = project_id(workspace, project)
       new_entry_attributes = {
-        "description" => description,
         "wid" => wid,
         "pid" => pid,
         "billable" => billable,
@@ -29,6 +32,7 @@ module Toggler
         "start" => @api.iso8601((Time.now - 3600).to_datetime),
         "created_with" => "toggler",
       }
+      new_entry_attributes["description"] = description if description
       api.create_time_entry(new_entry_attributes)
     end
 
@@ -38,6 +42,15 @@ module Toggler
 
     def default_workspace
       @default_wid ||= workspaces.first
+    end
+
+    def workspace_id(workspace_name)
+      workspaces.find { |w| w["name"] == workspace_name }["id"]
+    end
+
+    def project_id(workspace_name, project_name)
+      list_projects(workspace_name: workspace_name)
+        .find { |p| p["name"] == project_name }["id"]
     end
   end
 end
