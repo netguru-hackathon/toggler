@@ -32,7 +32,7 @@ class CommandLine
   end
 
   def fetch_list
-    Toggler::TogglManager.new.list_projects
+    Toggler::TogglManager.new.list_projects_with_tasks
   end
 
   def command_not_found
