@@ -1,1 +1,8 @@
 #!/usr/bin/env ruby
+
+require 'togglv8'
+require 'pry' 
+
+api_token = ENV["TOGGLER_API_KEY"]
+api = TogglV8::API.new(api_token)
+
