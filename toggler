@@ -23,6 +23,19 @@ module Toggler
     def default_workspace
       @default_wid ||= workspaces.first
     end
+
+    def start_entry(wid: default_workspace["id"], pid:, description:, billable: default_billable)
+      new_entry_attributes = {
+        "description" => description,
+        "wid" => wid,
+        "pid" => pid,
+        "billable" => billable,
+        "duration" => Time.now.to_i * -1,
+        "start" => @api.iso8601((Time.now - 3600).to_datetime),
+        "created_with" => "toggler",
+      }
+      api.create_time_entry(new_entry_attributes)
+    end
   end
 end
 
@@ -31,3 +44,4 @@ api = Toggler::ApiInterface.new
 binding.pry
 
 # api.list_projects
+# api.start_entry(pid: "22925160", description: "description")
