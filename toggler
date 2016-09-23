@@ -29,13 +29,13 @@ module Toggler
         "start" => @api.iso8601((Time.now - 3600).to_datetime),
         "created_with" => "toggler",
       }
-      api.create_time_entry(new_entry_attributes)
+      "time entry started" if api.create_time_entry(new_entry_attributes)
     end
 
     def stop_entry
       time_entry_id = api.get_current_time_entry&.[]("id")
       return "no running time entry" unless time_entry_id
-      api.stop_time_entry(time_entry_id)
+      "time entry stopped" if api.stop_time_entry(time_entry_id)
     end
 
     private
