@@ -8,6 +8,7 @@ module CommandLine
       @params = ARGV
       @command = params.shift
       assign_project_and_task(params.shift)
+      assign_project_and_task(params.shift) unless params[0].start_with?("-")
       @options = Parser.parse params
     end
 
