@@ -32,10 +32,11 @@ module CommandLine
     end
 
     def task_start
-      description = options.description
-      billable = options.billable
-      workspace = options.workspace
-      Toggler::TogglManager.new.start_entry
+      Toggler::TogglManager.new.start_entry(description: options.description,
+                                            task_name: task,
+                                            project_name: project,
+                                            billable: options.billable,
+                                            workspace_name: options.workspace)
     end
 
     def task_stop
