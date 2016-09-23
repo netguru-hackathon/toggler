@@ -17,7 +17,7 @@ module Toggler
         "pid" => project_id(workspace_name, project_name),
         "billable" => billable,
         "duration" => Time.now.to_i * -1,
-        "start" => @api.iso8601((Time.now - 3600).to_datetime),
+        "start" => @api.iso8601(Time.now.to_datetime),
         "created_with" => "toggler",
       }
       new_entry_attributes["description"] = description if description
