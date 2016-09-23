@@ -24,15 +24,15 @@ class CommandLine
   def task_start
     pid = params.shift
     description = params.join(' ')
-    Toggler::TogglManager.new.task_start(pid: pid, description: description)
+    Toggler::TogglManager.new.start_entry
   end
 
   def task_stop
-    Toggler::TogglManager.new.task_stop
+    Toggler::TogglManager.new.stop_entry
   end
 
   def fetch_list
-    Toggler::TogglManager.new.fetch_list
+    Toggler::TogglManager.new.list_projects
   end
 
   def command_not_found
