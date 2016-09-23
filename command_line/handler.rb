@@ -32,7 +32,7 @@ module CommandLine
     end
 
     def task_start
-      Toggler::TogglManager.new.start_entry(description: options.description,
+      puts Toggler::TogglManager.new.start_entry(description: options.description,
                                             task_name: task,
                                             project_name: project,
                                             billable: options.billable,
@@ -40,7 +40,7 @@ module CommandLine
     end
 
     def task_stop
-      Toggler::TogglManager.new.stop_entry
+      puts Toggler::TogglManager.new.stop_entry
     end
 
     def fetch_list

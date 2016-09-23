@@ -23,7 +23,6 @@ module Toggler
       new_entry_attributes["description"] = description if description
       new_entry_attributes["tid"] = task_id(workspace_name, project_name, task_name) if task_name
 
-      api.create_time_entry(new_entry_attributes)
       return "time entry started" if api.create_time_entry(new_entry_attributes)
       "error adding time entry"
     end
