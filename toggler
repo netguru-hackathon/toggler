@@ -1,24 +1,33 @@
 #!/usr/bin/env ruby
 
 require 'togglv8'
-require 'pry' 
+require 'pry'
 
-api_token = ENV["TOGGLER_API_KEY"]
-api = user = api.me(all=true)
-workspaces = api.my_workspaces(user)
-workspace = ENV[""]
-projects = api.projects(workspace)
+module Toggler
+  class ApiInterface
+    attr_reader :api, :user, :workspaces, :default_billable
+
+    def initialize
+      api_token = ENV["TOGGLER_API_KEY"]
+      @default_billable = ENV["TOGGLER_BILLABLE"] || false
+      @api = TogglV8::API.new(api_token)
+      @user = @api.me(true)
+      @workspaces = @api.my_workspaces(@user)
+    end
+
+    def list_projects(workspace_name: default_workspace["name"])
+      workspace = workspaces.find { |w| w["name"] == workspace_name }
+      api.projects(workspace["id"])
+    end
+
+    def default_workspace
+      @default_wid ||= workspaces.first
+    end
+  end
+end
+
+
+api = Toggler::ApiInterface.new
 binding.pry
 
-def _initialize
-  api_token = ENV["TOGGLER_API_KEY"]
-  @api = TogglV8::API.new(api_token)
-  @user = @api.me(true)
-  @user_workspaces = @api.my_workspaces(@user)
-end
-
-def list_projects(workspace_name)
-  workspace_name ||= @default_workspace
-  workspace_id = @user_workspaces.find { |w| w["name"] == workspace_name }
-  @api.projects(workspace_id)
-end
+# api.list_projects
