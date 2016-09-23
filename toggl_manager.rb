@@ -9,20 +9,21 @@ module Toggler
     end
 
     def start_entry(description = nil,
+                    task_name = nil,
                     project_name = default_project["name"],
                     billable = default_billable,
                     workspace_name = default_workspace["name"])
-      wid = workspace_id(workspace_name)
-      pid = project_id(workspace_name, project_name)
       new_entry_attributes = {
-        "wid" => wid,
-        "pid" => pid,
+        "wid" => workspace_id(workspace_name),
+        "pid" => project_id(workspace_name, project_name),
         "billable" => billable,
         "duration" => Time.now.to_i * -1,
         "start" => @api.iso8601((Time.now - 3600).to_datetime),
         "created_with" => "toggler",
       }
       new_entry_attributes["description"] = description if description
+      new_entry_attributes["tid"] = task_id(workspace_name, project_name, task_name) if task_name
+
       api.create_time_entry(new_entry_attributes)
       return "time entry started" if api.create_time_entry(new_entry_attributes)
       "error adding time entry"
@@ -73,6 +74,13 @@ module Toggler
     def project_id(workspace_name, project_name)
       list_projects(workspace_name)
         .find { |p| p["name"] == project_name }["id"]
+    end
+
+    def task_id(workspace_name, project_name, task_name)
+      wid = workspace_id(workspace_name)
+      pid = project_id(workspace_name, project_name)
+      api.tasks(wid)
+        .find { |t| t["pid"] == pid && t["name"] == task_name }["id"]
     end
   end
 end
