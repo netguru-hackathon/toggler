@@ -35,14 +35,24 @@ module Toggler
       "error stopping time entry"
     end
 
-    def list_projects(workspace_name = default_workspace["name"])
+    def list_projects_with_tasks(workspace_name = default_workspace["name"])
       wid = workspace_id(workspace_name)
-      api.projects(wid)
+      projects = api.projects(wid)
+      tasks = api.tasks(wid)
+      projects.map do |project|
+        project["tasks"] = tasks.select{ |task| task["pid"] == project["id"] }
+        project
+      end
     end
 
     private
 
     attr_reader :api, :user, :workspaces, :default_billable, :default_project
+
+    def list_projects(workspace_name = default_workspace["name"])
+      wid = workspace_id(workspace_name)
+      api.projects(wid)
+    end
 
     def default_workspace
       @default_wid ||= workspaces.first
