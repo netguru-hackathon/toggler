@@ -41,8 +41,21 @@ module Toggler
     def current_time_entry
       current_time_entry = api.get_current_time_entry
       return "no time entry started" if current_time_entry.nil?
-      return show_current_time_entry(current_time_entry)
+      time_from_start = count_time(Time.parse(current_time_entry['start']))
+      return show_time_entry(current_time_entry, time_from_start)
       "error getting time entry"
+    end
+
+    def summary(workspace_name:)
+      workspace_name ||= default_workspace["name"]
+      @reports_api.workspace_id = workspace_id(workspace_name)
+      entry = api.get_current_time_entry
+      total_time = @reports_api
+        .details
+        .select { |e| e["description"] == entry["description"] && e["pid"] == entry["pid"] }
+        .map{|e| Time.parse(e["end"]) - Time.parse(e["start"])}
+        .inject(0, :+)
+      show_time_entry(entry, total_time)
     end
 
     private
@@ -52,6 +65,7 @@ module Toggler
     def init_api
       @api_key = @config["toggl_api_key"]
       @api = TogglV8::API.new(@api_key)
+      @reports_api = TogglV8::ReportsV2.new(api_token: @api_key)
       @user = api.me(true)
       @workspaces = api.my_workspaces(user)
     end
@@ -99,13 +113,16 @@ module Toggler
         .find { |t| t["pid"] == pid && t["name"] == task_name }["id"]
     end
 
-    def show_current_time_entry(entry)
+    def show_time_entry(entry, time)
       project_name = api.get_project(entry['pid'])['name']
-      "#{entry['description']} |#{project_name}| #{parse_time(Time.parse(entry['start']))}"
+      "#{entry['description']} |#{project_name}| #{parse_time(time)}"
     end
 
-    def parse_time(start_time)
-      sec = Time.now - start_time
+    def count_time(start_time)
+      Time.now - start_time
+    end
+
+    def parse_time(sec)
       min, sec = sec.divmod(60)
       hour, min = min.divmod(60)
       "%02d:%02d:%02d" % [hour, min, sec]
