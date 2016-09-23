@@ -47,8 +47,13 @@ module CommandLine
     end
 
     def command_not_found
-      puts "Command not found"
-      puts
+      puts """
+      Command not found
+
+      start [[project]/[task]] - to start entry
+      stop                   - to stop current entry
+      list                   - to fetch all project entries
+      """
       puts CommandLine::Parser.parse %w[--help]
     end
   end
